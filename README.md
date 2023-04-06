@@ -1,2 +1,2 @@
 # golang-oauth2
-Oauth2 package for Golang
+Oauth2 client package for Golang
