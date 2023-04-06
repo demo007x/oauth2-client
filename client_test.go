@@ -5,8 +5,8 @@ import (
 )
 
 func TestNewOauth2Client(t *testing.T) {
-	var serverURL = "https://sso.univista-isg.com/api/v1/oauth2/authorize"
-	var redirectURI = "http://shoa-ucenter01-test.univista-isg.com:10240/idaas.html"
+	var serverURL = ""
+	var redirectURI = ""
 	var client = NewOauth2Client(
 		"2wLCawQ1fFhmsj0ADIQIquCLiGR6qSLA",
 		WithResponseType("code"),
