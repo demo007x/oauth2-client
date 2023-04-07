@@ -9,5 +9,6 @@ import (
 // GenerateBaseAuth Generate Http Base Auth
 func GenerateBaseAuth(name, password string) string {
 	var buf = bytes.NewBufferString(fmt.Sprintf("%s:%s", name, password))
-	return base64.StdEncoding.EncodeToString(buf.Bytes())
+	var encode = base64.StdEncoding.EncodeToString(buf.Bytes())
+	return "Basic " + encode
 }

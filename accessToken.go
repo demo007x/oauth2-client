@@ -59,6 +59,8 @@ func defaultAccessTokenRespHandler(resp *http.Response) (interface{}, error) {
 	return atr, nil
 }
 
+// AccessTokenWithGrantType
+// Config AccessToken with grant type
 func AccessTokenWithGrantType(grantType string) AccessTokenWithOption {
 	return func(ac *AccessToken) {
 		ac.GrantType = grantType
@@ -125,7 +127,7 @@ func (ac *AccessToken) verifyKeyAndSecret() *AccessToken {
 // verify grant type. if empty set default
 func (ac *AccessToken) verifyGrantType() *AccessToken {
 	if ac.err == nil {
-		if strings.TrimSpace(ac.GrantType) == "" {
+		if strings.TrimSpace(ac.GrantType) != "" {
 			ac.GrantType = types.DefaultAccessTokenGrantType
 			ac.values.Set("grant_type", ac.GrantType)
 		}
@@ -189,9 +191,9 @@ func NewAccessToken(serverURL, key, secret, code string, opts ...AccessTokenWith
 		Secret:    secret,
 		Code:      code,
 	}
+	accessToken.header = make(map[string]string)
 	for _, opt := range opts {
 		opt(accessToken)
 	}
-	accessToken.header = make(map[string]string)
 	return accessToken
 }

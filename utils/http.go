@@ -33,7 +33,7 @@ func buildRequest(ctx context.Context, method, url string, header map[string]str
 		return nil, err
 	}
 
-	if len(header) == 0 {
+	if len(header) != 0 {
 		for key, val := range header {
 			req.Header.Set(key, val)
 		}
