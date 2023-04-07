@@ -8,7 +8,7 @@ import (
 )
 
 type (
-	Oauth2Client struct {
+	OauthClient struct {
 		ServerURL    string
 		ResponseType string
 		Key          string
@@ -22,19 +22,19 @@ type (
 	}
 
 	// WithOption config option with oauth client field
-	WithOption func(client *Oauth2Client)
+	WithOption func(client *OauthClient)
 )
 
 // WithResponseType set client response type
 func WithResponseType(responseType string) WithOption {
-	return func(client *Oauth2Client) {
+	return func(client *OauthClient) {
 		client.ResponseType = responseType
 	}
 }
 
 // WithServerURl set oauth client request server url
 func WithServerURl(serverURl string) WithOption {
-	return func(client *Oauth2Client) {
+	return func(client *OauthClient) {
 		client.ServerURL = serverURl
 	}
 }
@@ -42,13 +42,13 @@ func WithServerURl(serverURl string) WithOption {
 // WithRedirectURI set oauth client redirectURI field
 // oauth server authorization with code redirect to redirectURI
 func WithRedirectURI(redirectURI string) WithOption {
-	return func(client *Oauth2Client) {
+	return func(client *OauthClient) {
 		client.RedirectURI = redirectURI
 	}
 }
 
 func WithScope(scope string) WithOption {
-	return func(client *Oauth2Client) {
+	return func(client *OauthClient) {
 		client.Scope = scope
 	}
 }
@@ -56,13 +56,13 @@ func WithScope(scope string) WithOption {
 // WithState set oauth client request with state field
 // oauth server authorization with state redirect to redirectURI
 func WithState(state string) WithOption {
-	return func(client *Oauth2Client) {
+	return func(client *OauthClient) {
 		client.State = state
 	}
 }
 
 // parse server uri and set client suParser field
-func (client *Oauth2Client) setServerURI() *Oauth2Client {
+func (client *OauthClient) setServerURI() *OauthClient {
 	if client.err == nil {
 		if strings.TrimSpace(client.ServerURL) == "" {
 			client.err = errorx.ServerURLError
@@ -80,7 +80,7 @@ func (client *Oauth2Client) setServerURI() *Oauth2Client {
 	return client
 }
 
-func (client *Oauth2Client) setRedirect() *Oauth2Client {
+func (client *OauthClient) setRedirect() *OauthClient {
 	if client.err == nil {
 		if strings.TrimSpace(client.RedirectURI) == "" {
 			return client
@@ -90,7 +90,7 @@ func (client *Oauth2Client) setRedirect() *Oauth2Client {
 	return client
 }
 
-func (client *Oauth2Client) setResponseType() *Oauth2Client {
+func (client *OauthClient) setResponseType() *OauthClient {
 	if client.err == nil {
 		responseType := client.ResponseType
 		if strings.TrimSpace(responseType) == "" {
@@ -101,7 +101,7 @@ func (client *Oauth2Client) setResponseType() *Oauth2Client {
 	return client
 }
 
-func (client *Oauth2Client) setScope() *Oauth2Client {
+func (client *OauthClient) setScope() *OauthClient {
 	if client.err == nil {
 		scope := strings.TrimSpace(client.Scope)
 		if len(scope) == 0 {
@@ -114,14 +114,14 @@ func (client *Oauth2Client) setScope() *Oauth2Client {
 
 // The application generates a random string and includes it in the request.
 // It should then check that the same value is returned after the user authorizes the app. This is used to prevent CSRF attacks.
-func (client *Oauth2Client) setState() *Oauth2Client {
+func (client *OauthClient) setState() *OauthClient {
 	if client.err == nil && strings.TrimSpace(client.State) != "" {
 		client.values.Set("state", client.State)
 	}
 	return client
 }
 
-func (client *Oauth2Client) setClientID() *Oauth2Client {
+func (client *OauthClient) setClientID() *OauthClient {
 	if client.err == nil {
 		if strings.TrimSpace(client.Key) == "" {
 			client.err = errorx.ClientKeyError
@@ -132,7 +132,7 @@ func (client *Oauth2Client) setClientID() *Oauth2Client {
 	return client
 }
 
-func (client *Oauth2Client) AuthorizeURL() (string, error) {
+func (client *OauthClient) AuthorizeURL() (string, error) {
 	c := client.
 		setServerURI().
 		setRedirect().
@@ -147,8 +147,8 @@ func (client *Oauth2Client) AuthorizeURL() (string, error) {
 	return c.suParser.String(), nil
 }
 
-func NewOauth2Client(clientID string, opts ...WithOption) *Oauth2Client {
-	var client = &Oauth2Client{Key: clientID}
+func NewOauth2Client(clientID string, opts ...WithOption) *OauthClient {
+	var client = &OauthClient{Key: clientID}
 	for _, opt := range opts {
 		opt(client)
 	}
