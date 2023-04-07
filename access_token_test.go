@@ -2,6 +2,7 @@ package oauth2_client
 
 import (
 	"io"
+	"log"
 	"net/http"
 	"testing"
 )
@@ -12,7 +13,11 @@ func TestNewAccessToken(t *testing.T) {
 	var password = "aOh4131NG3odJWF3o1c2TWncpwy2qgoCuNxcS5uw"
 	var code = "OGNJNTIXNGMTZWFKNC0ZZDJKLWJMMWUTYMY3NTYXOTU4ZTC2"
 	token := NewOauthAccessToken(serverURL, username, password, code, AccessTokenWithGrantType("authorization_code"), AccessTokenWithContentType("application/json"), AccessTokenWithResponseHandler(func(resp *http.Response) ([]byte, error) {
-		defer resp.Body.Close()
+		defer func() {
+			if err := resp.Body.Close(); err != nil {
+				log.Println(err)
+			}
+		}()
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err

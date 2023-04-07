@@ -32,12 +32,7 @@ The Authorization Code grant type is used by web and mobile apps. It differs fro
 OAuth is all about enabling users to grant limited access to applications. The application first needs to decide which permissions it is requesting, then send the user to a browser to get their permission. To begin the authorization flow, the application constructs a URL like the following and opens a browser to that URL.
 
 ```bash
-https://authorization-server.com/auth
- ?response_type=code
- &client_id=29352915982374239857
- &redirect_uri=https%3A%2F%2Fexample-app.com%2Fcallback
- &scope=create+delete
- &state=xcoiv98y2kd22vusuye3kch
+https://authorization-server.com/auth?response_type=code&client_id=29352915982374239857&redirect_uri=https%3A%2F%2Fexample-app.com%2Fcallback&scope=create+delete&state=xcoiv98y2kd22vusuye3kch
 ```
 
 Here’s each query parameter explained:
