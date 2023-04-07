@@ -3,6 +3,7 @@ package oauth2_client
 import (
 	"github.com/anziguoer/oauth2-client/errorx"
 	"github.com/anziguoer/oauth2-client/utils"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,6 +18,7 @@ type (
 		Secret       string
 		RefreshToken string
 		GrantType    string
+		ContentType  string
 		// internal field
 		respHandler OauthRefreshTokenResponseHandler
 		sup         *url.URL
@@ -27,8 +29,10 @@ type (
 )
 
 func defaultOauthRefreshTokenResponseHandler(resp *http.Response) ([]byte, error) {
-	//todo please implement me
-	panic("")
+	defer func() {
+		resp.Body.Close()
+	}()
+	return io.ReadAll(resp.Body)
 }
 
 func OauthRefreshTokenWithGrantType(grantType string) OauthRefreshTokenOption {
@@ -58,6 +62,22 @@ func OauthRefreshTokenWithSecret(secret string) OauthRefreshTokenOption {
 func OauthRefreshTokenWithServerURL(serverURL string) OauthRefreshTokenOption {
 	return func(token *OauthRefreshToken) {
 		token.ServerURL = serverURL
+	}
+}
+
+func RefreshTokenWithResponseHandler(handler OauthRefreshTokenResponseHandler) OauthRefreshTokenOption {
+	return func(token *OauthRefreshToken) {
+		token.respHandler = handler
+	}
+}
+
+func OauthRefreshTokenWithContentType(contentType string) OauthRefreshTokenOption {
+	return func(token *OauthRefreshToken) {
+		token.ContentType = contentType
+		if strings.TrimSpace(contentType) == "" {
+			token.ContentType = "application/json"
+		}
+		token.header["Content-Type"] = contentType
 	}
 }
 
@@ -108,16 +128,6 @@ func (ort *OauthRefreshToken) verifyKeyAndSecret() *OauthRefreshToken {
 			return ort
 		}
 		ort.header["Authorization"] = utils.GenerateBaseAuthorization(ort.Key, ort.Secret)
-	}
-
-	return ort
-}
-
-// SetOauthRefreshTokenResponseHandler
-// set OauthRefreshToken request server response handler
-func (ort *OauthRefreshToken) SetOauthRefreshTokenResponseHandler(handler OauthRefreshTokenResponseHandler) *OauthRefreshToken {
-	if ort.err == nil {
-		ort.respHandler = handler
 	}
 
 	return ort

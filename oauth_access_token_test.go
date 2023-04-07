@@ -28,5 +28,5 @@ func TestNewAccessToken(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	t.Log(string(data.([]byte)))
+	t.Log(string(data))
 }

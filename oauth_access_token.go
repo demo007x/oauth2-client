@@ -1,8 +1,6 @@
 package oauth2_client
 
 import (
-	"errors"
-	"fmt"
 	"github.com/anziguoer/oauth2-client/errorx"
 	"github.com/anziguoer/oauth2-client/types"
 	"github.com/anziguoer/oauth2-client/utils"
@@ -33,15 +31,10 @@ type (
 )
 
 func defaultAccessTokenRespHandler(resp *http.Response) ([]byte, error) {
-	data, err := io.ReadAll(resp.Body)
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New(fmt.Sprintf("the server response code %d, data %s", resp.StatusCode, string(data)))
-	}
-
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
+	defer func() {
+		resp.Body.Close()
+	}()
+	return io.ReadAll(resp.Body)
 }
 
 // AccessTokenWithGrantType
@@ -146,14 +139,14 @@ func (ac *OauthAccessToken) verifyRedirectURI() *OauthAccessToken {
 }
 
 // DoRequest request access token from oauth server
-func (ac *OauthAccessToken) DoRequest() (interface{}, error) {
+func (ac *OauthAccessToken) DoRequest() ([]byte, error) {
 	if err := ac.verifyServerURI().
 		verifyKeyAndSecret().
 		verifyGrantType().
 		verifyCode().
 		verifyRedirectURI().
 		err; err != nil {
-		return ac, ac.err
+		return nil, ac.err
 	}
 
 	ac.sup.RawQuery = ac.values.Encode()
@@ -161,7 +154,7 @@ func (ac *OauthAccessToken) DoRequest() (interface{}, error) {
 
 	resp, err := utils.DoRequest(requestHost, http.MethodPost, ac.header)
 	if err != nil {
-		return ac, err
+		return nil, err
 	}
 
 	if ac.respHandler == nil {

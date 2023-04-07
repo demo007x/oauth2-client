@@ -4,7 +4,6 @@ import (
 	"github.com/anziguoer/oauth2-client/errorx"
 	"github.com/anziguoer/oauth2-client/utils"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -33,15 +32,9 @@ type (
 
 func defaultUserInfoHandler(resp *http.Response) ([]byte, error) {
 	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			log.Println(err)
-		}
+		resp.Body.Close()
 	}()
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
+	return io.ReadAll(resp.Body)
 }
 
 func OauthUserInfoWithAccessToken(token string) WithOauthUserInfoOption {
