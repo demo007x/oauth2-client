@@ -2,6 +2,7 @@ package oauth2_client
 
 import (
 	"github.com/anziguoer/oauth2-client/errorx"
+	"github.com/anziguoer/oauth2-client/types"
 	"net/url"
 	"strings"
 )
@@ -93,7 +94,7 @@ func (client *Oauth2Client) setResponseType() *Oauth2Client {
 	if client.err == nil {
 		responseType := client.ResponseType
 		if strings.TrimSpace(responseType) == "" {
-			responseType = "code"
+			responseType = types.DefaultAuthorizeResponseType
 		}
 		client.values.Set("response_type", responseType)
 	}
