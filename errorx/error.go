@@ -8,4 +8,5 @@ var (
 	SecretKeyError        = errors.New("not set secret")
 	CodeEmptyError        = errors.New("code is empty")
 	RequestServerURLError = errors.New("request server url error")
+	RefreshTokenNotEmpty  = errors.New("refresh token not empty")
 )
