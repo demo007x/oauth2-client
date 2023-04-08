@@ -4,7 +4,7 @@
 </p>
 <h3 align=center>Golang 实现的 OAuth2.0 客户端</h3>
 
-[English](README.md) | 简体中文
+[English](README.md) | 简体中文 | [Oauth2 流程介绍](oauth-flow-en.md)
 
 ## OAuth 2.0协议流程
      +--------+                               +---------------+
