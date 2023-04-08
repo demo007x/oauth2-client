@@ -121,8 +121,6 @@ Pragma: no-cache
 <a href="https://www.buymeacoffee.com/demo007x" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 ## 问题讨论
-![image](https://user-images.githubusercontent.com/6418340/230716042-135d28f0-9912-4ba4-8adf-a8f14eb76b05.png)
-
-<a href="https://www.buymeacoffee.com/demo007x" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+<img src="https://user-images.githubusercontent.com/6418340/230716042-135d28f0-9912-4ba4-8adf-a8f14eb76b05.png" alt="discard with Me" style="height: 150px !important;width: 150px !important;" >
 
 
