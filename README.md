@@ -109,7 +109,14 @@ If you’re using the Authorization Code flow in a mobile app, or any other type
 The code exchange step ensures that an attacker isn’t able to intercept the access token, since the access token is always sent via a secure backchannel between the application and the OAuth server.
 
 
-## How to use please read main.go
+## How o use please read main.go
 
 [main.go ](main.go)
+
+## Give a Star! ⭐
+If you like or are using this project to learn or start your solution, please give it a star. Thanks!
+
+## Buy me a coffee
+
+<a href="https://www.buymeacoffee.com/demo007x" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
