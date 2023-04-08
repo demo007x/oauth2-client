@@ -170,10 +170,10 @@ func (ac *AccessToken) DoRequest() ([]byte, error) {
 }
 
 // NewAccessToken return AccessToken implement
-func NewAccessToken(serverURL, redirectURI, key, secret, code string, opts ...AccessTokenOption) *AccessToken {
+func NewAccessToken(serverURL, key, secret, code string, opts ...AccessTokenOption) *AccessToken {
 	var AccessToken = &AccessToken{}
 	AccessToken.header = make(map[string]string)
-	opts = append(opts, AccessTokenWithCode(code), AccessTokenWithKeyAndSecret(key, secret), AccessTokenWithServerURL(serverURL), AccessTokenWithRedirectURI(redirectURI))
+	opts = append(opts, AccessTokenWithCode(code), AccessTokenWithKeyAndSecret(key, secret), AccessTokenWithServerURL(serverURL))
 	for _, opt := range opts {
 		opt(AccessToken)
 	}

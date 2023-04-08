@@ -57,7 +57,7 @@ func (info *UserInfo) setToken() *UserInfo {
 }
 
 // DoRequest request oauth server get user info
-func (info *UserInfo) DoRequest() (interface{}, error) {
+func (info *UserInfo) DoRequest() ([]byte, error) {
 	if err := info.setServerURL().setToken().err; err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (info *UserInfo) DoRequest() (interface{}, error) {
 	if err != nil {
 		return nil, errorx.RequestServerURLError
 	}
-	if info.header == nil {
+	if info.handler == nil {
 		return types.DefaultOauthResponseHandler(resp)
 	}
 	return info.handler(resp)

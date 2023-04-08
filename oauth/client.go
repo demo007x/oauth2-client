@@ -16,6 +16,7 @@ type (
 		State        string
 		Scope        string
 		ResponseType string
+		Query        map[string]string
 		// internal filed
 		u      *url.URL
 		values url.Values
@@ -65,6 +66,14 @@ func WithState(state string) WithOption {
 func withClientID(clientID string) WithOption {
 	return func(client *Client) {
 		client.ClientID = clientID
+	}
+}
+
+// WithQuery custom query params
+// will be show in url query. display=mobile&a=b
+func WithQuery(query map[string]string) WithOption {
+	return func(client *Client) {
+		client.Query = query
 	}
 }
 
@@ -120,6 +129,15 @@ func (client *Client) setState() *Client {
 	return client
 }
 
+func (client *Client) setQuery() *Client {
+	if client.err == nil && len(client.Query) >= 0 {
+		for key, val := range client.Query {
+			client.values.Add(key, val)
+		}
+	}
+	return client
+}
+
 func (client *Client) setClientID() *Client {
 	if client.err == nil {
 		if strings.TrimSpace(client.ClientID) == "" {
@@ -132,18 +150,20 @@ func (client *Client) setClientID() *Client {
 }
 
 func (client *Client) AuthorizeURL() (string, error) {
-	c := client.
+	if err := client.
 		setServerURI().
 		setRedirect().
+		setQuery().
 		setResponseType().
 		setScope().
 		setState().
-		setClientID()
-	if c.err != nil {
-		return "", c.err
+		setClientID().
+		err; err != nil {
+		return "", client.err
 	}
-	c.u.RawQuery = client.values.Encode()
-	return c.u.String(), nil
+
+	client.u.RawQuery = client.values.Encode()
+	return client.u.String(), nil
 }
 
 func NewOauth2Client(serverURL, clientID string, opts ...WithOption) *Client {
