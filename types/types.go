@@ -1,4 +1,4 @@
-package oauth2_client
+package types
 
 import (
 	"io"
@@ -16,7 +16,7 @@ var (
 // OauthResponseHandler oauth2 server response handler
 type OauthResponseHandler func(resp *http.Response) ([]byte, error)
 
-func defaultOauthResponseHandler(resp *http.Response) ([]byte, error) {
+func DefaultOauthResponseHandler(resp *http.Response) ([]byte, error) {
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
 			log.Println(err)

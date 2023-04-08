@@ -1,16 +1,16 @@
-package oauth2_client
+package oauth
 
 import (
 	"testing"
 )
 
 func TestNewOauth2Client(t *testing.T) {
-	var serverURL = ""
+	var serverURL = "http://127.0.0.1:8200/auth/authorize"
 	var redirectURI = ""
 	var client = NewOauth2Client(
+		serverURL,
 		"2wLCawQ1fFhmsj0ADIQIquCLiGR6qSLA",
 		WithResponseType("code"),
-		WithServerURl(serverURL),
 		WithRedirectURI(redirectURI),
 		WithState("xxxxx"),
 	)
@@ -20,6 +20,5 @@ func TestNewOauth2Client(t *testing.T) {
 		t.Error(err)
 	} else {
 		t.Log(resp)
-		t.Log("this is a demo")
 	}
 }

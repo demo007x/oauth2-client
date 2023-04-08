@@ -1,3 +1,3 @@
-module github.com/anziguoer/oauth2-client
+module github.com/demo007x/oauth2-client
 
 go 1.13
