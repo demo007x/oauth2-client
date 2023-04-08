@@ -6,7 +6,7 @@
 
 [English](README.md) | 简体中文
 
-## OAuth 2.0 Protocol Flow
+## OAuth 2.0协议流程
      +--------+                               +---------------+
      |        |--(A)- Authorization Request ->|   Resource    |
      |        |                               |     Owner     |
@@ -108,6 +108,10 @@ Pragma: no-cache
 如果您在移动应用程序或无法存储客户端机密的任何其他类型的应用程序中使用授权代码流，那么您还应该使用 PKCE 扩展，它可以防止授权代码可能被攻击的其他攻击拦截。
 
 代码交换步骤确保攻击者无法拦截访问令牌，因为访问令牌始终通过应用程序和 OAuth 服务器之间的安全反向通道发送。
+
+## 具体使用请阅读 
+
+[main.go ](main.go)
 
 
 
