@@ -72,9 +72,9 @@ func OauthRefreshTokenWithContentType(contentType string) OauthRefreshTokenOptio
 	}
 }
 
-// verifyServerURI
+// setServerURI
 // todo 统一处理 Oauth 服务的校验
-func (ort *OauthRefreshToken) verifyServerURI() *OauthRefreshToken {
+func (ort *OauthRefreshToken) setServerURI() *OauthRefreshToken {
 	if ort.err == nil {
 		if strings.TrimSpace(ort.ServerURL) == "" {
 			ort.err = errorx.ServerURLError
@@ -89,7 +89,7 @@ func (ort *OauthRefreshToken) verifyServerURI() *OauthRefreshToken {
 	return ort
 }
 
-func (ort *OauthRefreshToken) verifyRefreshToken() *OauthRefreshToken {
+func (ort *OauthRefreshToken) setRefreshToken() *OauthRefreshToken {
 	if ort.err == nil {
 		if strings.TrimSpace(ort.RefreshToken) == "" {
 			ort.err = errorx.RefreshTokenNotEmpty
@@ -101,7 +101,7 @@ func (ort *OauthRefreshToken) verifyRefreshToken() *OauthRefreshToken {
 	return ort
 }
 
-func (ort *OauthRefreshToken) verifyGrantType() *OauthRefreshToken {
+func (ort *OauthRefreshToken) setGrantType() *OauthRefreshToken {
 	if ort.err == nil {
 		if strings.TrimSpace(ort.GrantType) == "" {
 			ort.GrantType = "refresh_token"
@@ -112,7 +112,7 @@ func (ort *OauthRefreshToken) verifyGrantType() *OauthRefreshToken {
 	return ort
 }
 
-func (ort *OauthRefreshToken) verifyKeyAndSecret() *OauthRefreshToken {
+func (ort *OauthRefreshToken) setKeyAndSecret() *OauthRefreshToken {
 	if ort.err == nil {
 		if strings.TrimSpace(ort.Key) == "" || strings.TrimSpace(ort.Secret) == "" {
 			ort.err = errorx.SecretKeyError
@@ -125,9 +125,9 @@ func (ort *OauthRefreshToken) verifyKeyAndSecret() *OauthRefreshToken {
 }
 
 func (ort *OauthRefreshToken) DoRequest() ([]byte, error) {
-	if err := ort.verifyServerURI().
-		verifyRefreshToken().
-		verifyKeyAndSecret().
+	if err := ort.setServerURI().
+		setRefreshToken().
+		setKeyAndSecret().
 		err; err != nil {
 		return nil, err
 	}

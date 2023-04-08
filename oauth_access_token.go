@@ -54,6 +54,24 @@ func AccessTokenWithContentType(contentType string) AccessTokenWithOption {
 	}
 }
 
+func AccessTokenWithServerURL(serverURL string) AccessTokenWithOption {
+	return func(ac *OauthAccessToken) {
+		ac.ServerURL = serverURL
+	}
+}
+
+func AccessTokenWithKeyAndSecret(key, secret string) AccessTokenWithOption {
+	return func(ac *OauthAccessToken) {
+		ac.Key, ac.Secret = key, secret
+	}
+}
+
+func AccessTokenWithCode(code string) AccessTokenWithOption {
+	return func(ac *OauthAccessToken) {
+		ac.Code = code
+	}
+}
+
 // AccessTokenWithResponseHandler
 // Custom access token handle. Response from server with call AccessTokenRespHandler
 func AccessTokenWithResponseHandler(handler OauthResponseHandler) AccessTokenWithOption {
@@ -62,8 +80,8 @@ func AccessTokenWithResponseHandler(handler OauthResponseHandler) AccessTokenWit
 	}
 }
 
-// verify server uri
-func (ac *OauthAccessToken) verifyServerURI() *OauthAccessToken {
+// set server uri
+func (ac *OauthAccessToken) setServerURI() *OauthAccessToken {
 	if ac.err == nil {
 		if strings.TrimSpace(ac.ServerURL) == "" {
 			ac.err = errorx.ServerURLError
@@ -77,8 +95,8 @@ func (ac *OauthAccessToken) verifyServerURI() *OauthAccessToken {
 	return ac
 }
 
-// verify key and secret
-func (ac *OauthAccessToken) verifyKeyAndSecret() *OauthAccessToken {
+// set key and secret
+func (ac *OauthAccessToken) setKeyAndSecret() *OauthAccessToken {
 	if ac.err == nil {
 		if strings.TrimSpace(ac.Key) == "" {
 			ac.err = errorx.ClientKeyError
@@ -95,8 +113,8 @@ func (ac *OauthAccessToken) verifyKeyAndSecret() *OauthAccessToken {
 	return ac
 }
 
-// verify grant type. if empty set default
-func (ac *OauthAccessToken) verifyGrantType() *OauthAccessToken {
+// set grant type. if empty set default
+func (ac *OauthAccessToken) setGrantType() *OauthAccessToken {
 	if ac.err == nil {
 		if strings.TrimSpace(ac.GrantType) != "" {
 			ac.GrantType = DefaultAccessTokenGrantType
@@ -106,8 +124,8 @@ func (ac *OauthAccessToken) verifyGrantType() *OauthAccessToken {
 	return ac
 }
 
-// verify code
-func (ac *OauthAccessToken) verifyCode() *OauthAccessToken {
+// set code
+func (ac *OauthAccessToken) setCode() *OauthAccessToken {
 	if ac.err == nil {
 		if strings.TrimSpace(ac.Code) == "" {
 			ac.err = errorx.CodeEmptyError
@@ -118,8 +136,8 @@ func (ac *OauthAccessToken) verifyCode() *OauthAccessToken {
 	return ac
 }
 
-// verify redirect uri
-func (ac *OauthAccessToken) verifyRedirectURI() *OauthAccessToken {
+// set redirect uri
+func (ac *OauthAccessToken) setRedirectURI() *OauthAccessToken {
 	if ac.err == nil {
 		if strings.TrimSpace(ac.RedirectURI) != "" {
 			ac.values.Set("redirect_url", ac.RedirectURI)
@@ -130,11 +148,11 @@ func (ac *OauthAccessToken) verifyRedirectURI() *OauthAccessToken {
 
 // DoRequest request access token from oauth server
 func (ac *OauthAccessToken) DoRequest() ([]byte, error) {
-	if err := ac.verifyServerURI().
-		verifyKeyAndSecret().
-		verifyGrantType().
-		verifyCode().
-		verifyRedirectURI().
+	if err := ac.setServerURI().
+		setKeyAndSecret().
+		setGrantType().
+		setCode().
+		setRedirectURI().
 		err; err != nil {
 		return nil, ac.err
 	}
@@ -155,14 +173,10 @@ func (ac *OauthAccessToken) DoRequest() ([]byte, error) {
 }
 
 // NewOauthAccessToken return OauthAccessToken implement
-func NewOauthAccessToken(serverURL, key, secret, code string, opts ...AccessTokenWithOption) *OauthAccessToken {
-	var OauthAccessToken = &OauthAccessToken{
-		ServerURL: serverURL,
-		Key:       key,
-		Secret:    secret,
-		Code:      code,
-	}
+func NewOauthAccessToken(serverURL, redirectURI, key, secret, code string, opts ...AccessTokenWithOption) *OauthAccessToken {
+	var OauthAccessToken = &OauthAccessToken{}
 	OauthAccessToken.header = make(map[string]string)
+	opts = append(opts, AccessTokenWithCode(code), AccessTokenWithKeyAndSecret(key, secret), AccessTokenWithServerURL(serverURL), AccessTokenWithRedirectURI(redirectURI))
 	for _, opt := range opts {
 		opt(OauthAccessToken)
 	}

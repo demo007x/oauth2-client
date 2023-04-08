@@ -14,9 +14,9 @@ type (
 		ServerURL   string
 
 		// internal field
-		respHandler OauthResponseHandler
-		header      map[string]string
-		err         error
+		handler OauthResponseHandler
+		header  map[string]string
+		err     error
 	}
 
 	OauthUserInfoResp struct {
@@ -42,13 +42,13 @@ func OauthUserInfoWithServerURL(serverURL string) WithOauthUserInfoOption {
 
 func OauthUserInfoWithResponseHandler(handler OauthResponseHandler) WithOauthUserInfoOption {
 	return func(info *OauthUserInfo) {
-		info.respHandler = handler
+		info.handler = handler
 	}
 }
 
-// verifyServerURL verify server url invalid
+// setServerURL set server url invalid
 // todo 统一url的验证函数
-func (info *OauthUserInfo) verifyServerURL() *OauthUserInfo {
+func (info *OauthUserInfo) setServerURL() *OauthUserInfo {
 	if info.err == nil {
 		_, err := url.Parse(info.ServerURL)
 		info.err = err
@@ -56,7 +56,7 @@ func (info *OauthUserInfo) verifyServerURL() *OauthUserInfo {
 	return info
 }
 
-func (info *OauthUserInfo) verifyToken() *OauthUserInfo {
+func (info *OauthUserInfo) setToken() *OauthUserInfo {
 	if info.err == nil {
 		info.header["Authorization"] = utils.GenerateBearAuthorization(info.AccessToken)
 	}
@@ -65,7 +65,7 @@ func (info *OauthUserInfo) verifyToken() *OauthUserInfo {
 
 // DoRequest request oauth server get user info
 func (info *OauthUserInfo) DoRequest() (interface{}, error) {
-	if err := info.verifyServerURL().verifyToken().err; err != nil {
+	if err := info.setServerURL().setToken().err; err != nil {
 		return nil, err
 	}
 	resp, err := utils.DoRequest(info.ServerURL, http.MethodPost, info.header)
@@ -75,7 +75,7 @@ func (info *OauthUserInfo) DoRequest() (interface{}, error) {
 	if info.header == nil {
 		return defaultOauthResponseHandler(resp)
 	}
-	return info.respHandler(resp)
+	return info.handler(resp)
 }
 
 func NewOauthUserInfo(serverURL, accessToken string, opts ...WithOauthUserInfoOption) *OauthUserInfo {

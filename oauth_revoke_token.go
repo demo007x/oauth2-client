@@ -67,7 +67,7 @@ func OauthRevokeTokenWithContentType(contentType string) OauthRevokeTokenOption 
 	}
 }
 
-func (ort *OauthRevokeToken) verifyServerURL() *OauthRevokeToken {
+func (ort *OauthRevokeToken) setServerURL() *OauthRevokeToken {
 	if ort.err == nil {
 		ort.u, ort.err = url.Parse(ort.ServerURL)
 		if ort.err != nil {
@@ -77,7 +77,7 @@ func (ort *OauthRevokeToken) verifyServerURL() *OauthRevokeToken {
 	return ort
 }
 
-func (ort *OauthRevokeToken) verifyKeyAndSecret() *OauthRevokeToken {
+func (ort *OauthRevokeToken) setKeyAndSecret() *OauthRevokeToken {
 	if ort.err == nil {
 		if strings.TrimSpace(ort.Key) == "" {
 			ort.err = errorx.ClientKeyError
@@ -93,7 +93,7 @@ func (ort *OauthRevokeToken) verifyKeyAndSecret() *OauthRevokeToken {
 	return ort
 }
 
-func (ort *OauthRevokeToken) verifyAccessToken() *OauthRevokeToken {
+func (ort *OauthRevokeToken) setAccessToken() *OauthRevokeToken {
 	if ort.err == nil {
 		if strings.TrimSpace(ort.Key) == "" {
 			ort.err = errorx.ClientKeyError
@@ -104,7 +104,7 @@ func (ort *OauthRevokeToken) verifyAccessToken() *OauthRevokeToken {
 	return ort
 }
 
-func (ort *OauthRevokeToken) verifyTokenTypeHint() *OauthRevokeToken {
+func (ort *OauthRevokeToken) setTokenTypeHint() *OauthRevokeToken {
 	if ort.err == nil {
 		ort.values.Set("token_type_hint", ort.TokenTypeHint)
 		if strings.TrimSpace(ort.TokenTypeHint) == "" {
@@ -115,10 +115,10 @@ func (ort *OauthRevokeToken) verifyTokenTypeHint() *OauthRevokeToken {
 }
 
 func (ort *OauthRevokeToken) DoRequest() ([]byte, error) {
-	if err := ort.verifyServerURL().
-		verifyKeyAndSecret().
-		verifyAccessToken().
-		verifyTokenTypeHint().
+	if err := ort.setServerURL().
+		setKeyAndSecret().
+		setAccessToken().
+		setTokenTypeHint().
 		err; err != nil {
 		return nil, err
 	}
