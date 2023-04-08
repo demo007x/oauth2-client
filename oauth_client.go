@@ -2,7 +2,6 @@ package oauth2_client
 
 import (
 	"github.com/anziguoer/oauth2-client/errorx"
-	"github.com/anziguoer/oauth2-client/types"
 	"net/url"
 	"strings"
 )
@@ -16,9 +15,10 @@ type (
 		RedirectURI  string
 		State        string
 		Scope        string
-		suParser     *url.URL
-		values       url.Values
-		err          error
+		// internal filed
+		u      *url.URL
+		values url.Values
+		err    error
 	}
 
 	// WithOption config option with oauth client field
@@ -74,7 +74,7 @@ func (client *OauthClient) setServerURI() *OauthClient {
 			client.err = err
 			return client
 		}
-		client.suParser = parseURL
+		client.u = parseURL
 		client.values = parseURL.Query()
 	}
 	return client
@@ -94,7 +94,7 @@ func (client *OauthClient) setResponseType() *OauthClient {
 	if client.err == nil {
 		responseType := client.ResponseType
 		if strings.TrimSpace(responseType) == "" {
-			responseType = types.DefaultAuthorizeResponseType
+			responseType = DefaultAuthorizeResponseType
 		}
 		client.values.Set("response_type", responseType)
 	}
@@ -143,8 +143,8 @@ func (client *OauthClient) AuthorizeURL() (string, error) {
 	if c.err != nil {
 		return "", c.err
 	}
-	c.suParser.RawQuery = client.values.Encode()
-	return c.suParser.String(), nil
+	c.u.RawQuery = client.values.Encode()
+	return c.u.String(), nil
 }
 
 func NewOauth2Client(clientID string, opts ...WithOption) *OauthClient {

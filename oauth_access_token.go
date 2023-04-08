@@ -2,18 +2,17 @@ package oauth2_client
 
 import (
 	"github.com/anziguoer/oauth2-client/errorx"
-	"github.com/anziguoer/oauth2-client/types"
 	"github.com/anziguoer/oauth2-client/utils"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
 )
 
 type (
-	AccessTokenWithOption  func(ac *OauthAccessToken)
-	AccessTokenRespHandler func(resp *http.Response) ([]byte, error)
-	OauthAccessToken       struct {
+	AccessTokenWithOption func(ac *OauthAccessToken)
+	OauthAccessToken      struct {
 		ServerURL   string
 		Key         string
 		Secret      string
@@ -22,17 +21,19 @@ type (
 		RedirectURI string
 		ContentType string
 		// Internal field
-		respHandler AccessTokenRespHandler
-		sup         *url.URL
-		values      url.Values
-		header      map[string]string
-		err         error
+		handler OauthResponseHandler
+		sup     *url.URL
+		values  url.Values
+		header  map[string]string
+		err     error
 	}
 )
 
 func defaultAccessTokenRespHandler(resp *http.Response) ([]byte, error) {
 	defer func() {
-		resp.Body.Close()
+		if err := resp.Body.Close(); err != nil {
+			log.Println(err)
+		}
 	}()
 	return io.ReadAll(resp.Body)
 }
@@ -66,9 +67,9 @@ func AccessTokenWithContentType(contentType string) AccessTokenWithOption {
 
 // AccessTokenWithResponseHandler
 // Custom access token handle. Response from server with call AccessTokenRespHandler
-func AccessTokenWithResponseHandler(handler AccessTokenRespHandler) AccessTokenWithOption {
+func AccessTokenWithResponseHandler(handler OauthResponseHandler) AccessTokenWithOption {
 	return func(ac *OauthAccessToken) {
-		ac.respHandler = handler
+		ac.handler = handler
 	}
 }
 
@@ -109,7 +110,7 @@ func (ac *OauthAccessToken) verifyKeyAndSecret() *OauthAccessToken {
 func (ac *OauthAccessToken) verifyGrantType() *OauthAccessToken {
 	if ac.err == nil {
 		if strings.TrimSpace(ac.GrantType) != "" {
-			ac.GrantType = types.DefaultAccessTokenGrantType
+			ac.GrantType = DefaultAccessTokenGrantType
 			ac.values.Set("grant_type", ac.GrantType)
 		}
 	}
@@ -157,11 +158,11 @@ func (ac *OauthAccessToken) DoRequest() ([]byte, error) {
 		return nil, err
 	}
 
-	if ac.respHandler == nil {
-		ac.respHandler = defaultAccessTokenRespHandler
+	if ac.handler == nil {
+		return defaultAccessTokenRespHandler(resp)
 	}
 	// handler response
-	return ac.respHandler(resp)
+	return ac.handler(resp)
 }
 
 // NewOauthAccessToken return OauthAccessToken implement

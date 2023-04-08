@@ -4,19 +4,19 @@ import (
 	"github.com/anziguoer/oauth2-client/errorx"
 	"github.com/anziguoer/oauth2-client/utils"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 )
 
 type (
-	WithOauthUserInfoOption      func(info *OauthUserInfo)
-	OauthUserInfoResponseHandler func(resp *http.Response) ([]byte, error)
-	OauthUserInfo                struct {
+	WithOauthUserInfoOption func(info *OauthUserInfo)
+	OauthUserInfo           struct {
 		AccessToken string
 		ServerURL   string
 
 		// internal field
-		respHandler OauthUserInfoResponseHandler
+		respHandler OauthResponseHandler
 		header      map[string]string
 		err         error
 	}
@@ -32,7 +32,9 @@ type (
 
 func defaultUserInfoHandler(resp *http.Response) ([]byte, error) {
 	defer func() {
-		resp.Body.Close()
+		if err := resp.Body.Close(); err != nil {
+			log.Println(err)
+		}
 	}()
 	return io.ReadAll(resp.Body)
 }
@@ -49,7 +51,7 @@ func OauthUserInfoWithServerURL(serverURL string) WithOauthUserInfoOption {
 	}
 }
 
-func OauthUserInfoWithResponseHandler(handler OauthUserInfoResponseHandler) WithOauthUserInfoOption {
+func OauthUserInfoWithResponseHandler(handler OauthResponseHandler) WithOauthUserInfoOption {
 	return func(info *OauthUserInfo) {
 		info.respHandler = handler
 	}

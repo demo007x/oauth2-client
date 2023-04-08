@@ -4,15 +4,15 @@ import (
 	"github.com/anziguoer/oauth2-client/errorx"
 	"github.com/anziguoer/oauth2-client/utils"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
 )
 
 type (
-	OauthRefreshTokenOption          func(token *OauthRefreshToken)
-	OauthRefreshTokenResponseHandler func(resp *http.Response) ([]byte, error)
-	OauthRefreshToken                struct {
+	OauthRefreshTokenOption func(token *OauthRefreshToken)
+	OauthRefreshToken       struct {
 		ServerURL    string
 		Key          string
 		Secret       string
@@ -20,8 +20,8 @@ type (
 		GrantType    string
 		ContentType  string
 		// internal field
-		respHandler OauthRefreshTokenResponseHandler
-		sup         *url.URL
+		respHandler OauthResponseHandler
+		u           *url.URL
 		header      map[string]string
 		values      url.Values
 		err         error
@@ -30,7 +30,9 @@ type (
 
 func defaultOauthRefreshTokenResponseHandler(resp *http.Response) ([]byte, error) {
 	defer func() {
-		resp.Body.Close()
+		if err := resp.Body.Close(); err != nil {
+			log.Println(err)
+		}
 	}()
 	return io.ReadAll(resp.Body)
 }
@@ -65,7 +67,7 @@ func OauthRefreshTokenWithServerURL(serverURL string) OauthRefreshTokenOption {
 	}
 }
 
-func RefreshTokenWithResponseHandler(handler OauthRefreshTokenResponseHandler) OauthRefreshTokenOption {
+func RefreshTokenWithResponseHandler(handler OauthResponseHandler) OauthRefreshTokenOption {
 	return func(token *OauthRefreshToken) {
 		token.respHandler = handler
 	}
@@ -89,9 +91,9 @@ func (ort *OauthRefreshToken) verifyServerURI() *OauthRefreshToken {
 			ort.err = errorx.ServerURLError
 			return ort
 		}
-		ort.sup, ort.err = url.Parse(ort.ServerURL)
+		ort.u, ort.err = url.Parse(ort.ServerURL)
 		if ort.err == nil {
-			ort.values = ort.sup.Query()
+			ort.values = ort.u.Query()
 		}
 	}
 
@@ -140,8 +142,8 @@ func (ort *OauthRefreshToken) DoRequest() ([]byte, error) {
 		err; err != nil {
 		return nil, err
 	}
-	ort.sup.RawQuery = ort.values.Encode()
-	var requestHost = ort.sup.String()
+	ort.u.RawQuery = ort.values.Encode()
+	var requestHost = ort.u.String()
 	resp, err := utils.DoRequest(requestHost, http.MethodPost, ort.header)
 	if err != nil {
 		return nil, err
