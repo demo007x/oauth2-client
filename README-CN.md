@@ -1,6 +1,10 @@
 # Golang OAuth 2.0 Client
+<p align="center">
+<img align="center" width="150px" src="https://www.oauth.com/wp-content/themes/oauthdotcom/images/oauth_logo@2x.png" />
+</p>
+<h3 align=center>Golang 实现的 OAuth2.0 客户端</h3>
 
-golang 实现的 OAuth2.0 客户端
+[English](README.md) | 简体中文
 
 ## OAuth 2.0 Protocol Flow
      +--------+                               +---------------+

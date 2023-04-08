@@ -1,5 +1,11 @@
 # Golang OAuth 2.0 Client
-Oauth2 client package for Golang
+
+<p align="center">
+<img align="center" width="150px" src="https://www.oauth.com/wp-content/themes/oauthdotcom/images/oauth_logo@2x.png" />
+</p>
+<h3 align=center>Oauth2 Client Package For Golang</h3>
+
+English | [简体中文](README-CN.md)
 
 ## OAuth 2.0 Protocol Flow
      +--------+                               +---------------+
