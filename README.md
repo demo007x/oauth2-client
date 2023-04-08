@@ -5,7 +5,7 @@
 </p>
 <h3 align=center>Oauth2 Client Package For Golang</h3>
 
-English | [简体中文](README-CN.md) | [Oauth2 Flow](oauth-flow-cn.md)
+English | [简体中文](README-CN.md) | [Oauth2 Flow](oauth-flow.md)
 
 ## OAuth 2.0 Protocol Flow
      +--------+                               +---------------+
