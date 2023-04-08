@@ -3,8 +3,6 @@ package oauth2_client
 import (
 	"github.com/anziguoer/oauth2-client/errorx"
 	"github.com/anziguoer/oauth2-client/utils"
-	"io"
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -29,15 +27,6 @@ type (
 		Name     string `json:"name"`
 	}
 )
-
-func defaultUserInfoHandler(resp *http.Response) ([]byte, error) {
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			log.Println(err)
-		}
-	}()
-	return io.ReadAll(resp.Body)
-}
 
 func OauthUserInfoWithAccessToken(token string) WithOauthUserInfoOption {
 	return func(info *OauthUserInfo) {
@@ -84,7 +73,7 @@ func (info *OauthUserInfo) DoRequest() (interface{}, error) {
 		return nil, errorx.RequestServerURLError
 	}
 	if info.header == nil {
-		return defaultUserInfoHandler(resp)
+		return defaultOauthResponseHandler(resp)
 	}
 	return info.respHandler(resp)
 }

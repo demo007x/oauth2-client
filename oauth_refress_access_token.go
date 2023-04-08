@@ -3,8 +3,6 @@ package oauth2_client
 import (
 	"github.com/anziguoer/oauth2-client/errorx"
 	"github.com/anziguoer/oauth2-client/utils"
-	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -27,15 +25,6 @@ type (
 		err         error
 	}
 )
-
-func defaultOauthRefreshTokenResponseHandler(resp *http.Response) ([]byte, error) {
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			log.Println(err)
-		}
-	}()
-	return io.ReadAll(resp.Body)
-}
 
 func OauthRefreshTokenWithGrantType(grantType string) OauthRefreshTokenOption {
 	return func(token *OauthRefreshToken) {
@@ -149,7 +138,7 @@ func (ort *OauthRefreshToken) DoRequest() ([]byte, error) {
 		return nil, err
 	}
 	if ort.respHandler == nil {
-		return defaultOauthRefreshTokenResponseHandler(resp)
+		return defaultOauthResponseHandler(resp)
 	}
 	return ort.respHandler(resp)
 }

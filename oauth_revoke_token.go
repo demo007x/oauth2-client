@@ -3,8 +3,6 @@ package oauth2_client
 import (
 	"github.com/anziguoer/oauth2-client/errorx"
 	"github.com/anziguoer/oauth2-client/utils"
-	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -28,15 +26,6 @@ type (
 		err     error
 	}
 )
-
-func defaultOauthRevokeTokenWithResponseHandler(resp *http.Response) ([]byte, error) {
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			log.Println(err)
-		}
-	}()
-	return io.ReadAll(resp.Body)
-}
 
 func OauthRevokeTokenWithServerURL(serverURL string) OauthRevokeTokenOption {
 	return func(token *OauthRevokeToken) {
@@ -140,7 +129,7 @@ func (ort *OauthRevokeToken) DoRequest() ([]byte, error) {
 		return nil, err
 	}
 	if ort.handler == nil {
-		return defaultOauthRevokeTokenWithResponseHandler(resp)
+		return defaultOauthResponseHandler(resp)
 	}
 	return ort.handler(resp)
 }

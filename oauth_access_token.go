@@ -3,8 +3,6 @@ package oauth2_client
 import (
 	"github.com/anziguoer/oauth2-client/errorx"
 	"github.com/anziguoer/oauth2-client/utils"
-	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -28,15 +26,6 @@ type (
 		err     error
 	}
 )
-
-func defaultAccessTokenRespHandler(resp *http.Response) ([]byte, error) {
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			log.Println(err)
-		}
-	}()
-	return io.ReadAll(resp.Body)
-}
 
 // AccessTokenWithGrantType
 // Config OauthAccessToken with grant type
@@ -159,7 +148,7 @@ func (ac *OauthAccessToken) DoRequest() ([]byte, error) {
 	}
 
 	if ac.handler == nil {
-		return defaultAccessTokenRespHandler(resp)
+		return defaultOauthResponseHandler(resp)
 	}
 	// handler response
 	return ac.handler(resp)

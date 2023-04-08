@@ -1,6 +1,10 @@
 package oauth2_client
 
-import "net/http"
+import (
+	"io"
+	"log"
+	"net/http"
+)
 
 var (
 	// DefaultAuthorizeResponseType default authorize response type is code
@@ -11,3 +15,12 @@ var (
 
 // OauthResponseHandler oauth2 server response handler
 type OauthResponseHandler func(resp *http.Response) ([]byte, error)
+
+func defaultOauthResponseHandler(resp *http.Response) ([]byte, error) {
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Println(err)
+		}
+	}()
+	return io.ReadAll(resp.Body)
+}
